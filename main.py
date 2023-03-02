@@ -21,18 +21,18 @@ def lucky_tickets_count(from_num: int, to_num: int, worker='Main process'):
     rc.print(f'Execution time {worker}:', end-start, style='bold red')
 
 
-rc.print(Panel('For getting a number of lucky tickets you have to enter a two number of ticket '
+rc.print(Panel('For getting a number of "lucky tickets" you have to enter four numbers of tickets '
                'number\'s range (no more 6 digits per number).\n'
                'Or type "exit" to exit the application',
                style='bold rgb(36,3,89) on rgb(252,246,123)',
                title="""Count of lucky ticket's number"""
                ))
 while True:
-    first_param = rc.input('Please input first ticket number: ')
+    first_param = rc.input('\nPlease input the number of the first range from: ')
     if first_param == 'exit':
         break
 
-    second_param = rc.input('Please input second ticket number: ')
+    second_param = rc.input('Please input the number of the second range from: ')
     if second_param == 'exit':
         break
 
@@ -41,25 +41,42 @@ while True:
                  style='blink bold red')
         continue
 
+    third_param = rc.input('Please input the number of the third range from: ')
+    if first_param == 'exit':
+        break
+
+    fourth_param = rc.input('Please input the number of the fourth range from: ')
+    if second_param == 'exit':
+        break
+
+    if len(third_param) > 6 or len(fourth_param) > 6:
+        rc.print('You have entered the wrong ticket number. Please, try again and be careful',
+                 style='blink bold red')
+        continue
+
     try:
-        from_number = int(first_param)
-        to_number = int(second_param)
+        from_number1 = int(first_param)
+        to_number1 = int(second_param)
+        from_number2 = int(third_param)
+        to_number2 = int(fourth_param)
     except Exception as err:
         raise err
 
-    lucky_tickets_count(from_number, to_number)
-    thread1 = Thread(target=lucky_tickets_count, kwargs={'from_num': from_number,
-                                                         'to_num': to_number,
+    lucky_tickets_count(from_number1, to_number1, worker='Main process 1')
+    lucky_tickets_count(from_number2, to_number2, worker='Main process 2')
+
+    thread1 = Thread(target=lucky_tickets_count, kwargs={'from_num': from_number1,
+                                                         'to_num': to_number1,
                                                          'worker': 'thread1'})
-    thread2 = Thread(target=lucky_tickets_count, kwargs={'from_num': from_number,
-                                                         'to_num': to_number,
+    thread2 = Thread(target=lucky_tickets_count, kwargs={'from_num': from_number2,
+                                                         'to_num': to_number2,
                                                          'worker': 'thread2'})
 
-    process1 = Process(target=lucky_tickets_count, kwargs={'from_num': from_number,
-                                                           'to_num': to_number,
+    process1 = Process(target=lucky_tickets_count, kwargs={'from_num': from_number1,
+                                                           'to_num': to_number1,
                                                            'worker': 'process1'})
-    process2 = Process(target=lucky_tickets_count, kwargs={'from_num': from_number,
-                                                           'to_num': to_number,
+    process2 = Process(target=lucky_tickets_count, kwargs={'from_num': from_number2,
+                                                           'to_num': to_number2,
                                                            'worker': 'process2'})
 
     thread1.start()
